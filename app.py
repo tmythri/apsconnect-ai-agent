@@ -1,15 +1,20 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-import requests
 
 app = FastAPI()
 
 class Question(BaseModel):
     question: str
 
-# Hugging Face Inference API
-HF_API_URL = "https://api-inference.huggingface.co/models/TinyLlama/TinyLlama-1.1B-Chat-v1.0"
-HF_HEADERS = {"Authorization": "Bearer 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"}  # 👈 paste your HF token here
+# Simple FAQ knowledge base
+FAQ = {
+    "exam date": "The internal exams are scheduled from 15th to 20th September.",
+    "attendance rule": "Students must maintain 75% attendance to be eligible for exams.",
+    "fees last date": "The last date to pay fees is 5th October.",
+    "library timing": "The library is open from 9 AM to 6 PM on weekdays.",
+    "holiday list": "The holiday list is available on the college notice board and app.",
+    "event calendar": "College cultural fest is scheduled in December."
+}
 
 @app.get("/")
 def home():
@@ -17,17 +22,8 @@ def home():
 
 @app.post("/ask")
 def ask(data: Question):
-    q = data.question
-    payload = {"inputs": q}
-
-    # Send request to Hugging Face API
-    response = requests.post(HF_API_URL, headers=HF_HEADERS, json=payload)
-
-    if response.status_code == 200:
-        try:
-            output = response.json()[0]["generated_text"]
-            return {"answer": output}
-        except Exception:
-            return {"answer": "Error: unexpected response format"}
-    else:
-        return {"answer": f"Error: {response.status_code}, {response.text}"}
+    q = data.question.lower()
+    for key, answer in FAQ.items():
+        if key in q:
+            return {"answer": answer}
+    return {"answer": "Sorry, I don’t know that yet. Please check with the college office."}
