@@ -9,7 +9,7 @@ class Question(BaseModel):
 
 # Hugging Face Inference API
 HF_API_URL = "https://api-inference.huggingface.co/models/TinyLlama/TinyLlama-1.1B-Chat-v1.0"
-HF_HEADERS = {"Authorization": "Bearer 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"}  # 👈 paste your HF token here
+HF_HEADERS = {"Authorization": "Bearer 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"}  # 👈 paste your HF token here
 
 @app.get("/")
 def home():
